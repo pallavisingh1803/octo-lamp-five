@@ -19,38 +19,49 @@
       5. Add a countdown timer - when the time is up, end the quiz, display the score and highlight the correct answers
 *************************** */
 
-window.addEventListener('DOMContentLoaded', () => {
-  const start = document.querySelector('#start');
-  start.addEventListener('click', function (e) {
-    document.querySelector('#quizBlock').style.display = 'block';
-    start.style.display = 'none';
+window.addEventListener("DOMContentLoaded", () => {
+  const start = document.querySelector("#start");
+
+  start.addEventListener("click", function (e) {
+    document.querySelector("#quizBlock").style.display = "block";
+    start.style.display = "none";
   });
   // quizArray QUESTIONS & ANSWERS
   // q = QUESTION, o = OPTIONS, a = CORRECT ANSWER
   // Basic ideas from https://code-boxx.com/simple-javascript-quiz/
   const quizArray = [
     {
-      q: 'Which is the third planet from the sun?',
-      o: ['Saturn', 'Earth', 'Pluto', 'Mars'],
+      q: "Which is the third planet from the sun?",
+      o: ["Saturn", "Earth", "Pluto", "Mars"],
       a: 1, // array index 1 - so Earth is the correct answer here
     },
     {
-      q: 'Which is the largest ocean on Earth?',
-      o: ['Atlantic Ocean', 'Indian Ocean', 'Arctic Ocean', 'Pacific Ocean'],
+      q: "Which is the largest ocean on Earth?",
+      o: ["Atlantic Ocean", "Indian Ocean", "Arctic Ocean", "Pacific Ocean"],
       a: 3,
     },
     {
-      q: 'What is the capital of Australia',
-      o: ['Sydney', 'Canberra', 'Melbourne', 'Perth'],
+      q: "What is the capital of Australia",
+      o: ["Sydney", "Canberra", "Melbourne", "Perth"],
+      a: 1,
+    },
+    {
+      q: "Which planet has rings?",
+      o: ["Mercury", "Earth", " Venus", "Saturn"],
+      a: 4,
+    },
+    {
+      q: "What is the largest mammal?",
+      o: ["Whale", "Cow", "Horse", "camel"],
       a: 1,
     },
   ];
 
   // function to Display the quiz questions and answers from the object
   const displayQuiz = () => {
-    const quizWrap = document.querySelector('#quizWrap');
-    let quizDisplay = '';
-    quizArray.map((quizItem, index) => {
+    const quizWrap = document.querySelector("#quizWrap");
+    let quizDisplay = "";
+    quizArray.forEach((quizItem, index) => {
       quizDisplay += `<ul class="list-group">
                    Q - ${quizItem.q}
                     <li class="list-group-item mt-2" id="li_${index}_0"><input type="radio" name="radio${index}" id="radio_${index}_0"> ${quizItem.o[0]}</li>
@@ -66,25 +77,54 @@ window.addEventListener('DOMContentLoaded', () => {
   // Calculate the score
   const calculateScore = () => {
     let score = 0;
-    quizArray.map((quizItem, index) => {
+    quizArray.forEach((quizItem, index) => {
       for (let i = 0; i < 4; i++) {
         //highlight the li if it is the correct answer
         let li = `li_${index}_${i}`;
         let r = `radio_${index}_${i}`;
-        liElement = document.querySelector('#' + li);
-        radioElement = document.querySelector('#' + r);
+        liElement = document.querySelector("#" + li);
+        radioElement = document.querySelector("#" + r);
 
         if (quizItem.a == i) {
+          liElement.style.backgroundColor = "green";
           //change background color of li element here
         }
 
-        if (radioElement.checked) {
+        if (radioElement.checked && quizItem.a === i) {
+          score++;
           // code for task 1 goes here
         }
       }
     });
+    alert(`Your total score is: ${score} out of ${quizArray.length}`);
   };
+
+  document
+    .querySelector("#btnSubmit")
+    .addEventListener("click", calculateScore);
 
   // call the displayQuiz function
   displayQuiz();
 });
+
+const resetBtn = document.querySelector("#btnReset");
+resetBtn.addEventListener("click", () => {
+  window.location.reload();
+});
+
+const timerDisplay = document.querySelector("#time");
+let timeLeft = 60;
+
+const startTimer = () => {
+  const timer = setInterval(() => {
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      alert("Time is up!");
+      calculateScore(); // End quiz and display score
+    } else {
+      timerDisplay.innerText = `Time Left: ${timeLeft} seconds`;
+      timeLeft--;
+    }
+  }, 1000);
+  displayQuiz();
+};
